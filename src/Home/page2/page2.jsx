@@ -9,7 +9,7 @@ import FilterPage from '../filterPage/Filter.jsx';
 import SortedPosts from '../../components/SortedPosts.jsx';
 import cl from './page2.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCategoryTitle, setCategoryTitled, setSelectedSubcategory } from '../../actions.js';
+import {setCategoryTitle, setCategoryTitled, setSelectedSubcategory, setSelectedSubsubcategory} from '../../actions.js';
 import Loader from '../../components/UI/Loader/Loader.jsx';
 
 const InfoPage = () => {
@@ -127,11 +127,20 @@ const InfoPage = () => {
       scrollToActiveCategory();
     }
   }, [data]);
+  const handleSelectedCategoryChange = (categoryId) => {
+    // Сбросить выбранные подкатегории и подподкатегории
+    dispatch(setSelectedSubcategory(null));
+    dispatch(setSelectedSubsubcategory(null));
 
+    // Добавить другие действия, если необходимо
+    console.log("Selected category changed:", categoryId);
+  };
   const handleCategoryClick = async (categoryId, categoryTitle) => {
     if (activeCategory === categoryId) {
       return;
     }
+  handleSelectedCategoryChange()
+
     setPrevCategories([...prevCategories, activeCategory]);
     document.querySelectorAll(`${cl.card__item}`).forEach((tab) => {
       tab.classList.remove(cl.active);
@@ -183,6 +192,7 @@ const InfoPage = () => {
                       className={`${cl.tab} ${location.pathname.includes(`/page2/${cat.id}`) ? cl.active : ''}`}
                       onClick={() => handleCategoryClick(cat.id, cat.attributes.title)}
                       data-category={cat.id}
+
                     >
                       <img
                         className={cl.button__image}

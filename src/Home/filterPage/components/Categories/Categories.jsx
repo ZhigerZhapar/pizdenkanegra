@@ -242,11 +242,11 @@ const Categories = ({ activeCategory, onCategoryClick, handleFilterPageClose }) 
                     ))}
                 </div>
             </div>
-            <MyLine />
+            <MyLine/>
+
             {selectedButton !== null && (
                 <>
                     <Places activeCategory={activeCategoryId} selectedSubcategory={selectedSubcategory} />
-
                 </>
             )}
             {isDataLoading ? (
@@ -256,9 +256,7 @@ const Categories = ({ activeCategory, onCategoryClick, handleFilterPageClose }) 
             ) : (
                 <div className={cl.cont}>
                     <MyLine/>
-
                     <MyBigButton
-                        className={cl.ishak}
                         onSelectCategory={handleCategorySelect}
                         handleFilterPageClose={handleFilterPageClose}
                         categoryId={activeCategoryId}
@@ -266,6 +264,7 @@ const Categories = ({ activeCategory, onCategoryClick, handleFilterPageClose }) 
                     >
                         Показать результаты
                     </MyBigButton>
+
                 </div>
             )}
         </div>

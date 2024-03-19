@@ -82,7 +82,7 @@ const Places = ({ selectedSubcategory, activeCategory, onSubcategorySelect }) =>
                         ))}
                 </div>
             </div>
-            <MyLine />
+
             {selectedButtons[activeCategory] !== null && (
                 <SubPlaces
                     classname={cl.sintol}
@@ -90,6 +90,7 @@ const Places = ({ selectedSubcategory, activeCategory, onSubcategorySelect }) =>
                     subcategoryId={selectedSubcategoryId}
                 />
             )}
+
         </>
     );
 };

@@ -10,32 +10,35 @@ import Loader from "./UI/Loader/Loader.jsx";
 import axios from "axios";
 import { setSelectedSubcategory } from "../actions.js";
 
-const SortedPosts = ({fId, categoryId, categoryTitle }) => {
+const SortedPosts = ({ fId, categoryId, categoryTitle }) => {
     const [localData, setLocalData] = useState([]);
     const dispatch = useDispatch();
     const { buttons } = useSelector(state => state.button);
     const [allData, setAllData] = useState([]);
-
+    const selectedSubsubcategory = useSelector(state => state.title.subsubcategory);
     const { data, loading, error } = useFetch(
         `https://places-test-api.danya.tech/api/categories/${fId}?populate=posts,posts.images,posts.category,posts.subcategory,posts.subsubcategory`
     );
 
-        const selectedSubcategory = useSelector(state => state.title.selectedSubcategory);
+    const selectedSubcategory = useSelector(state => state.title.selectedSubcategory);
 
     useEffect(() => {
         handleSelectedSubcategoryChange(selectedSubcategory);
     }, [selectedSubcategory]);
+
     useEffect(() => {
         if (selectedSubcategory !== null) {
             handleSelectedSubcategoryChange(selectedSubcategory);
         }
     }, [selectedSubcategory]);
+
     useEffect(() => {
         const savedSubcategory = JSON.parse(localStorage.getItem('selectedSubcategory'));
         if (savedSubcategory !== undefined) {
             dispatch(setSelectedSubcategory(savedSubcategory));
         }
     }, [dispatch]);
+
     useEffect(() => {
         handleSelectedSubcategoryChange(selectedSubcategory);
     }, [selectedSubcategory]);
@@ -72,28 +75,26 @@ const SortedPosts = ({fId, categoryId, categoryTitle }) => {
             console.error("Error during API request:", error);
         }
     };
-    const seks = useSelector(state=>state.title.subsubcategory)
-    console.log(seks)
-    const filteredData = data?.attributes?.posts?.data
-        ? data.attributes.posts.data.filter(post => {
-            const postSubcategoryId = post.attributes.subcategory?.data?.id;
-            const postSubsubcategoryIds = Array.isArray(post.attributes.subsubcategory?.data)
-                ? post.attributes.subsubcategory.data.map(subsubcategory => subsubcategory.id)
-                : [];
-            // Проверяем, что айдишник подкатегории или один из айдишников подподкатегорий равен выбранному айдишнику
-            return postSubcategoryId === selectedSubcategory || postSubsubcategoryIds.includes(selectedSubcategory);
-        })
-        : [];
+    useEffect(() => {
+        // Загружаем состояние лайков из локального хранилища при монтировании компонента
+        const savedLikes = JSON.parse(localStorage.getItem('likes')) || {};
+        dispatch(setButtons(savedLikes));
+    }, [dispatch]);
 
-        useEffect(() => {
-            if (data && data.length > 0) {
-                const uniqueData = data.filter((newPost) => {
-                    return !allData.some((existingPost) => existingPost.id === newPost.id);
-                });
-    
-                setAllData((prevData) => [...prevData, ...uniqueData]);
-            }
-        }, [data]);
+    useEffect(() => {
+        // Сохраняем состояние лайков в локальное хранилище при каждом обновлении состояния buttons
+        localStorage.setItem('likes', JSON.stringify(buttons));
+    }, [buttons]);
+
+    useEffect(() => {
+        if (data && data.length > 0) {
+            const uniqueData = data.filter((newPost) => {
+                return !allData.some((existingPost) => existingPost.id === newPost.id);
+            });
+
+            setAllData((prevData) => [...prevData, ...uniqueData]);
+        }
+    }, [data]);
 
     const savedCategoryId = JSON.parse(localStorage.getItem('selectedCategoryId'));
 
@@ -103,6 +104,26 @@ const SortedPosts = ({fId, categoryId, categoryTitle }) => {
         }
     }, []);
 
+    let filteredData = localData;
+
+    if (selectedSubcategory !== null) {
+        filteredData = filteredData.filter(post => post.attributes.subcategory?.data?.id === selectedSubcategory);
+    }
+
+    if (selectedSubsubcategory !== null) {
+        filteredData = filteredData.filter(post => {
+            const postSubsubcategoryIds = Array.isArray(post.attributes.subsubcategory?.data)
+                ? post.attributes.subsubcategory.data.map(subsubcategory => subsubcategory.id)
+                : [];
+            return postSubsubcategoryIds.includes(selectedSubsubcategory) || post.attributes.subsubcategory?.data?.id === selectedSubsubcategory;
+        });
+    }
+
+// Если подкатегории или подподкатегории не выбраны, выводим все посты
+    if (selectedSubcategory === null && selectedSubsubcategory === null) {
+        filteredData = localData;
+    }
+
     return (
         <div className={`${cl.food__bottom} ${cl._container}`}>
             {loading ? (
@@ -111,7 +132,7 @@ const SortedPosts = ({fId, categoryId, categoryTitle }) => {
                 </div>
             ) : (
                 <div className={`${cl.food__row}`}>
-                    {(filteredData.length > 0 ? filteredData : localData).map((post) => (
+                    {filteredData.map((post) => (
                         <div className={`${cl.food__column}`} key={post.id}>
                             <div>
                                 <Link to={`/page2/previewPage/${post.id}?categoryId=${categoryId}`}>

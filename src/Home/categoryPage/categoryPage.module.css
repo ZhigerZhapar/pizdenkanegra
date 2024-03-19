@@ -363,8 +363,17 @@ body {
 }
 .card__block__item {
     position: relative;
-    margin-bottom: 76px;
+    /* Убираем отступ */
+    margin-bottom: 0;
 }
+
+/* Опечатка исправлена: "margin-bottom" */
+@media (min-width: 430px) {
+    .card__item {
+        width: 125px;
+    }
+}
+
 
 .card__block__item:nth-child(5n) {
     margin-bottom: 0px;
@@ -405,8 +414,6 @@ body {
 
 .block__item__text {
     margin-top: 8px;
-    position: absolute;
-    z-index: 1000;
 }
 
 .block__item__text__spanned {

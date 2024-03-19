@@ -3,6 +3,7 @@ import cl from "./MyBigButton.module.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveCategory, setSelectedSubcategory } from "../../../../../actions.js";
+import MyLine from "../MyLine/MyLine.jsx";
 
 const MyBigButton = ({ catId, onSelectCategory, handleFilterPageClose, categoryId, onLoadPosts, children, ...props }) => {
     const navigate = useNavigate();
@@ -31,13 +32,15 @@ const MyBigButton = ({ catId, onSelectCategory, handleFilterPageClose, categoryI
     };
 
     return (
-        <div className={cl.ntclown}>
+        <>
+            <div className={cl.ntclown}>
             <div className={cl.myBtnWrapper}>
                 <button {...props} className={cl.myBtn} onClick={handleButtonClick}>
                     {children}
                 </button>
             </div>
         </div>
+        </>
     );
 };
 

@@ -19,7 +19,7 @@ export const setSelectedSubcategory = (subcategory) => ({
     payload: subcategory,
 });
 export const setSelectedSubsubcategory = (subsubcategory) => ({
-    type: 'SET_SELECTED_SUBCATEGORY',
+    type: 'SET_SELECTED_SUBSUBCATEGORY',
     payload: subsubcategory,
 });
 export const clearSelectedSubcategory = () => ({
@@ -53,7 +53,7 @@ categoryTitled: null,
     selectedSubcategory: null,
     categoryData: null,
     currentSubcategoryId: null,
-
+    subsubcategory:null,
 };
 
 
@@ -81,7 +81,7 @@ const rootReducer = (state = initialState, action) => {
         case 'SET_SELECTED_SUBSUBCATEGORY':
             return {
                 ...state,
-                subsubcategory: null
+                subsubcategory: action.payload
             };
         case 'CLEAR_SELECTED_SUBCATEGORY':
             return {
